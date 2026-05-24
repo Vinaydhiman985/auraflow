@@ -21,8 +21,20 @@ connectDB();
 const app = express();
 
 // 3. Configure Standard Middleware
+const allowedOrigins = [
+  'http://localhost:5173',
+  process.env.CLIENT_URL
+].filter(Boolean);
+
 const corsOptions = {
-  origin: 'http://localhost:5173', // Pinned React Vite Client
+  origin: (origin, callback) => {
+    // Allow local connections, matching production origins, or skip checks if not production
+    if (!origin || allowedOrigins.includes(origin) || process.env.NODE_ENV !== 'production') {
+      callback(null, true);
+    } else {
+      callback(new Error(`Origin ${origin} not allowed by CORS`));
+    }
+  },
   credentials: true, // Allow secure HTTP-Only cookies to sync
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
