@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
+import API_URL from '../api.js';
 
 const AuthContext = createContext();
 
@@ -29,19 +30,15 @@ export const AuthProvider = ({ children }) => {
 
   const handleRefresh = async () => {
     try {
-      const res = await fetch('/api/auth/refresh', { method: 'POST' });
+      const res = await fetch(`${API_URL}/api/auth/refresh`, { method: 'POST' });
       const data = await res.json();
-      
       if (data.success) {
         setToken(data.accessToken);
         localStorage.setItem('habitflow_token', data.accessToken);
-        
-        // Fetch user profile details using new access token
-        const profileRes = await fetch('/api/user/profile', {
+        const profileRes = await fetch(`${API_URL}/api/user/profile`, {
           headers: { 'Authorization': `Bearer ${data.accessToken}` }
         });
         const profileData = await profileRes.json();
-        
         if (profileData.success) {
           setUser(profileData.user);
           setIsAuthenticated(true);
@@ -62,41 +59,35 @@ export const AuthProvider = ({ children }) => {
     const initAuth = async () => {
       if (token) {
         try {
-          const res = await fetch('/api/user/profile', {
+          const res = await fetch(`${API_URL}/api/user/profile`, {
             headers: { 'Authorization': `Bearer ${token}` }
           });
           const data = await res.json();
-          
           if (data.success) {
             setUser(data.user);
             setIsAuthenticated(true);
             setLoading(false);
           } else {
-            // Access token expired, attempt cookie refresh
             await handleRefresh();
           }
         } catch (err) {
           await handleRefresh();
         }
       } else {
-        // No token, check if cookie exists by pinging refresh directly (extremely robust!)
         await handleRefresh();
       }
     };
-    
     initAuth();
   }, [token]);
 
-  // 1. LOGIN
   const login = async (email, password) => {
     try {
-      const res = await fetch('/api/auth/login', {
+      const res = await fetch(`${API_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
-
       if (data.success) {
         setToken(data.accessToken);
         setUser(data.user);
@@ -114,16 +105,14 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // 2. REGISTER
   const register = async (name, email, password) => {
     try {
-      const res = await fetch('/api/auth/register', {
+      const res = await fetch(`${API_URL}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password }),
       });
       const data = await res.json();
-
       if (data.success) {
         setToken(data.accessToken);
         setUser(data.user);
@@ -141,22 +130,19 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // 3. LOGOUT
   const logout = async () => {
     try {
-      await fetch('/api/auth/logout', { method: 'POST' });
-    } catch (e) {
-      // Allow logout even if API call fails
-    } finally {
+      await fetch(`${API_URL}/api/auth/logout`, { method: 'POST' });
+    } catch (e) {}
+    finally {
       logoutSilent();
       toast.success('Logged out successfully.');
     }
   };
 
-  // 4. UPDATE PROFILE
   const updateProfile = async (name, email, avatar) => {
     try {
-      const res = await fetch('/api/user/profile', {
+      const res = await fetch(`${API_URL}/api/user/profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -165,7 +151,6 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify({ name, email, avatar }),
       });
       const data = await res.json();
-
       if (data.success) {
         setUser(data.user);
         toast.success('Profile updated successfully!');
