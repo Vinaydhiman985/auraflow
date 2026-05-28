@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
-import API_URL from '../api.js';
+const API_URL = import.meta.env.VITE_API_URL || 'https://auraflow-backend-l0ya.onrender.com';
 
 const AuthContext = createContext();
 
