@@ -10,10 +10,10 @@ const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email || !password) return;
-    const success = login(email, password);
+    const success = await login(email, password);
     if (success) {
       navigate('/dashboard');
     }
@@ -23,8 +23,8 @@ const Login = () => {
     setEmail('student@auraflow.com');
     setPassword('student123');
     // Log in automatically after setting state
-    setTimeout(() => {
-      const success = login('student@auraflow.com', 'student123');
+    setTimeout(async () => {
+      const success = await login('student@auraflow.com', 'student123');
       if (success) {
         navigate('/dashboard');
       }

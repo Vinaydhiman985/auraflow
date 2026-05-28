@@ -142,7 +142,7 @@ const Layout = ({ children }) => {
         </header>
 
         {/* 3. CONTENT AREA */}
-        <main className="flex-1 overflow-y-auto px-4 md:px-6 py-6 pb-24 md:pb-8 bg-slate-50/50 dark:bg-slate-950/40 relative">
+        <main className="flex-1 overflow-y-auto px-4 md:px-6 py-6 pb-24 md:pb-8 bg-slate-50/50 dark:bg-slate-950/40 mesh-gradient relative">
           <div className="max-w-6xl mx-auto w-full animate-slide-up">
             {children}
           </div>
