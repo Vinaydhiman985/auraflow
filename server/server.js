@@ -2,7 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import path from 'path';
+
 import { fileURLToPath } from 'url';
 import connectDB from './config/db.js';
 import errorHandler from './middleware/errorHandler.js';
@@ -70,13 +70,7 @@ if (process.env.NODE_ENV === 'production') {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = path.dirname(__filename);
   
-  // Serve compiled React build static assets
-  app.use(express.static(path.join(__dirname, '../client/dist')));
-  
-  // Handle SPA routing: fall back all unmatched routes to index.html
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/dist/index.html'));
-  });
+ 
 }
 
 // 7. Boot listening
